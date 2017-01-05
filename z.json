@@ -1,0 +1,749 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"size",
+				"size_t"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "/home/mp/prj/c/a.c",
+			"settings":
+			{
+				"buffer_size": 510,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "/* This may look like nonsense, but really is -*-"
+			}
+		},
+		{
+			"file": "/home/mp/prj/c/b.c",
+			"settings":
+			{
+				"buffer_size": 282,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "int main(int argc, char* argv[argc+1]) {"
+			}
+		},
+		{
+			"file": "/home/mp/.profile",
+			"settings":
+			{
+				"buffer_size": 681,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "package matchers\n\nimport (\n\t\"encoding/xml\"\n\t\"errors\"\n\t\"fmt\"\n\t\"log\"\n\t\"net/http\"\n\t\"regexp\"\n\n\t\"github.com/goinaction/code/chapter2/sample/search\"\n)\n\ntype (\n\t// item defines the fields associated with the item tag\n\t// in the rss document.\n\titem struct {\n\t\tXMLName     xml.Name `xml:\"item\"`\n\t\tPubDate     string   `xml:\"pubDate\"`\n\t\tTitle       string   `xml:\"title\"`\n\t\tDescription string   `xml:\"description\"`\n\t\tLink        string   `xml:\"link\"`\n\t\tGUID        string   `xml:\"guid\"`\n\t\tGeoRssPoint string   `xml:\"georss:point\"`\n\t}\n\n\t// image defines the fields associated with the image tag\n\t// in the rss document.\n\timage struct {\n\t\tXMLName xml.Name `xml:\"image\"`\n\t\tURL     string   `xml:\"url\"`\n\t\tTitle   string   `xml:\"title\"`\n\t\tLink    string   `xml:\"link\"`\n\t}\n\n\t// channel defines the fields associated with the channel tag\n\t// in the rss document.\n\tchannel struct {\n\t\tXMLName        xml.Name `xml:\"channel\"`\n\t\tTitle          string   `xml:\"title\"`\n\t\tDescription    string   `xml:\"description\"`\n\t\tLink           string   `xml:\"link\"`\n\t\tPubDate        string   `xml:\"pubDate\"`\n\t\tLastBuildDate  string   `xml:\"lastBuildDate\"`\n\t\tTTL            string   `xml:\"ttl\"`\n\t\tLanguage       string   `xml:\"language\"`\n\t\tManagingEditor string   `xml:\"managingEditor\"`\n\t\tWebMaster      string   `xml:\"webMaster\"`\n\t\tImage          image    `xml:\"image\"`\n\t\tItem           []item   `xml:\"item\"`\n\t}\n\n\t// rssDocument defines the fields associated with the rss document.\n\trssDocument struct {\n\t\tXMLName xml.Name `xml:\"rss\"`\n\t\tChannel channel  `xml:\"channel\"`\n\t}\n)\n\n// rssMatcher implements the Matcher interface.\ntype rssMatcher struct{}\n\n// init registers the matcher with the program.\nfunc init() {\n\tvar matcher rssMatcher\n\tsearch.Register(\"rss\", matcher)\n}\n\n// Search looks at the document for the specified search term.\nfunc (m rssMatcher) Search(feed *search.Feed, searchTerm string) ([]*search.Result, error) {\n\tvar results []*search.Result\n\n\tlog.Printf(\"Search Feed Type[%s] Site[%s] For URI[%s]\\n\", feed.Type, feed.Name, feed.URI)\n\n\t// Retrieve the data to search.\n\tdocument, err := m.retrieve(feed)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\tfor _, channelItem := range document.Channel.Item {\n\t\t// Check the title for the search term.\n\t\tmatched, err := regexp.MatchString(searchTerm, channelItem.Title)\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\n\t\t// If we found a match save the result.\n\t\tif matched {\n\t\t\tresults = append(results, &search.Result{\n\t\t\t\tField:   \"Title\",\n\t\t\t\tContent: channelItem.Title,\n\t\t\t})\n\t\t}\n\n\t\t// Check the description for the search term.\n\t\tmatched, err = regexp.MatchString(searchTerm, channelItem.Description)\n\t\tif err != nil {\n\t\t\treturn nil, err\n\t\t}\n\n\t\t// If we found a match save the result.\n\t\tif matched {\n\t\t\tresults = append(results, &search.Result{\n\t\t\t\tField:   \"Description\",\n\t\t\t\tContent: channelItem.Description,\n\t\t\t})\n\t\t}\n\t}\n\n\treturn results, nil\n}\n\n// retrieve performs a HTTP Get request for the rss feed and decodes the results.\nfunc (m rssMatcher) retrieve(feed *search.Feed) (*rssDocument, error) {\n\tif feed.URI == \"\" {\n\t\treturn nil, errors.New(\"No rss feed uri provided\")\n\t}\n\n\t// Retrieve the rss feed document from the web.\n\tresp, err := http.Get(feed.URI)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n\n\t// Close the response once we return from the function.\n\tdefer resp.Body.Close()\n\n\t// Check the status code for a 200 so we know we have received a\n\t// proper response.\n\tif resp.StatusCode != 200 {\n\t\treturn nil, fmt.Errorf(\"HTTP Response Error %d\\n\", resp.StatusCode)\n\t}\n\n\t// Decode the rss feed document into our struct type.\n\t// We don't need to check for errors, the caller can do this.\n\tvar document rssDocument\n\terr = xml.NewDecoder(resp.Body).Decode(&document)\n\treturn &document, err\n}",
+			"file": "/home/mp/prj/go/pr2/rss.go",
+			"file_size": 3709,
+			"file_write_time": 131278044712746754,
+			"settings":
+			{
+				"buffer_size": 3709,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"last_filter": "pci",
+		"selected_items":
+		[
+			[
+				"pci",
+				"Package Control: List Packages"
+			],
+			[
+				"pack con l",
+				"Package Control: List Packages"
+			],
+			[
+				"packa co i",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 160.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'df21e130d211cfc94d9b0905775a7c0f' + '1e3d39e33b79698005270310898eea76'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"print('erno')",
+			"a+b",
+			"b=4",
+			"a=3",
+			"a=2,b=4"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/mp/prj/sublime"
+	],
+	"file_history":
+	[
+		"/media/mp/flashdev-01/Kazan",
+		"/home/mp/prj/go/data.go",
+		"/home/mp/prj/sublime/a.txt",
+		"/home/mp/prj/go/pr2/search.go",
+		"/home/mp/prj/go/pr1/f",
+		"/etc/hosts",
+		"/home/mp/prj/go/a.go",
+		"/home/mp/prj/c/intx",
+		"/home/mp/prj/c/cf",
+		"/home/mp/prj/sublime/x.sublime-project",
+		"/home/mp/prj/html/a.html",
+		"/home/mp/prj/sublime/b.txt",
+		"/home/mp/prj/sublime/c.txt",
+		"/home/mp/prj/go/b.go",
+		"/home/mp/prj/go/pkg1/p2.go",
+		"/home/mp/prj/go/pkg1/p1.go",
+		"/usr/local/go/src/runtime/trace/trace.go",
+		"/usr/bin/subl",
+		"/usr/local/go/src/os/types.go",
+		"/usr/local/go/pkg/linux_amd64/runtime/race.a",
+		"/etc/apt/sources.list.d/pgdg.list",
+		"/home/mp/Downloads/Jetbrains/clion/clion.desktop",
+		"/home/mp/prj/p/pr1/a.py",
+		"/home/mp/Desktop/7-964-123-4567",
+		"/etc/profile.d/jdk.sh"
+	],
+	"find":
+	{
+		"height": 38.0
+	},
+	"find_in_files":
+	{
+		"height": 96.0,
+		"where_history":
+		[
+			"c.txt",
+			"c.txt, b.txt",
+			"c.txt",
+			"<open files>",
+			"a.txt b.txt",
+			""
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"behavior",
+			"Py",
+			"debug",
+			"\t\t\t\n",
+			"\t\t\t",
+			"shell_cmd",
+			"tab_size",
+			"Emmet",
+			"to",
+			"\"plu...\\d\"",
+			"\"\\w\\d\"",
+			"\"plugin\\d\"",
+			"\"plugin\"",
+			"\"dis.*\"",
+			"\"(.*)\"",
+			"\"plugin\"",
+			"\"(.*)\"",
+			"emme.",
+			"emmet",
+			"func"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"\"jopa2\"",
+			"\"jopa\""
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 3,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "/home/mp/prj/c/a.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 510,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								343,
+								343
+							]
+						],
+						"settings":
+						{
+							"auto_name": "/* This may look like nonsense, but really is -*-",
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										353,
+										354
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/round_bracket.png",
+										"brackethighlighter.default"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										331,
+										332
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content"
+							],
+							"syntax": "Packages/C++/C.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/home/mp/prj/c/b.c",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 282,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								121,
+								121
+							]
+						],
+						"settings":
+						{
+							"auto_name": "int main(int argc, char* argv[argc+1]) {",
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										123,
+										124
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/double_quote.png",
+										"brackethighlighter.default"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										118,
+										119
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/C++/C.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/home/mp/.profile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 681,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								424,
+								424
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+								},
+								"icon":
+								{
+								},
+								"open":
+								{
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content"
+							],
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 82.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/home/mp/prj/go/pr2/rss.go",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3709,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3709,
+								3709
+							]
+						],
+						"settings":
+						{
+							"bracket_highlighter.busy": false,
+							"bracket_highlighter.locations":
+							{
+								"close":
+								{
+									"1":
+									[
+										3708,
+										3709
+									]
+								},
+								"icon":
+								{
+									"1":
+									[
+										"Packages/BracketHighlighter/icons/curly_bracket.png",
+										"brackethighlighter.default"
+									]
+								},
+								"open":
+								{
+									"1":
+									[
+										3016,
+										3017
+									]
+								},
+								"unmatched":
+								{
+								}
+							},
+							"bracket_highlighter.regions":
+							[
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content"
+							],
+							"syntax": "Packages/Go/Go.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2290.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 38.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 279.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "x.sublime-project",
+	"replace":
+	{
+		"height": 70.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"a.t",
+				"a.txt"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

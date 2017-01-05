@@ -1,0 +1,22 @@
+{
+	"folders":
+	[
+		{
+			"path": ".",
+			"file_exclude_pattern": "c*txt"
+		}
+	],
+	"build_systems":
+	[
+		{
+			"name": "List",
+			"shell_cmd": "ps"
+		}
+	],
+	"settings":
+	[
+		{
+			"tab_size": 10
+		}
+	]
+}
