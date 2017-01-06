@@ -1,20 +1,12 @@
 Package Control Messages
 ========================
 
-Emmet
------
+Kolablik
+--------
 
-  Thank you for installing Emmet -- a toolkit that can greatly improve your workflow. Note that this "plugin1" automatically downloads and installs PyV8 binary (see status bar message). 
-  1
-  2
-  3
-  4
-  4
-  5
-  6
-  7
-  8
-  9
+  Kolablik is a toolkit that can greatly improve your water flow. This plugin automatically downloads and installs KV8 binary (see status bar message). 
+  <><><><><><><>
+
   
   ******************************
   Please restart editor to finish 
@@ -105,3 +97,4 @@ SublimeLinter
   Thank you!
 blaha muha selo en trok ga ka za feroen te gorilla
 reblond
+zarik-14
